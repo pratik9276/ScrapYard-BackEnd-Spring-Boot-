@@ -57,6 +57,7 @@ public class ScrapMaterial {
 		this.price = price;
 	}
 
+	
 	@Override
 	public String toString() {
 		return "ScrapMaterial [id=" + id + ", name=" + name + ", price=" + price + "]";

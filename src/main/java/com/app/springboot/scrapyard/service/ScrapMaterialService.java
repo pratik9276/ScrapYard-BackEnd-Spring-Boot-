@@ -22,4 +22,10 @@ public class ScrapMaterialService {
         {
 		return scrapMaterialRepository.findAll();
 	    }
+	  
+	  @Transactional
+		public List<ScrapMaterial> getAllScrapMaterial(int id)
+		{
+			return scrapMaterialRepository.getAllScrapMaterial(id);
+		}
 }
