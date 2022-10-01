@@ -3,6 +3,8 @@ package com.app.springboot.scrapyard.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,9 +46,9 @@ public class CartController {
 	public Cart addToCart(@RequestBody Cart cart)
 	{
 		System.out.println(cart.getId());
-		System.out.println(cart.getCustomer());
+		System.out.println(cart.getUser());
 		System.out.println(cart.toString());
-		cartService.addToCart(0,cart.getCustomer(),cart.getScrapMaterial());
+		cartService.addToCart(0,cart.getUser(),cart.getScrapMaterial());
 		return cart;
 	}
 	
@@ -54,6 +56,18 @@ public class CartController {
 	public int countOfData()
 	{
 		return cartService.countOfParsentData();
+	}
+	
+	@DeleteMapping("/deleteCartByUserId/{userId}")
+	public ResponseEntity<String>deleteCartByUserId(@PathVariable Integer userId)
+	{
+		if(userId!=0)
+		{
+		 cartService.deleteCartByUserId(userId);
+		 return new ResponseEntity<>(HttpStatus.OK);
+		}
+		
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 	
 }

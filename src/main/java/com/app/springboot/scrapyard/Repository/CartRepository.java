@@ -17,7 +17,7 @@ import com.app.springboot.scrapyard.entity.ScrapMaterialData;
 public interface CartRepository extends JpaRepository<Cart,Integer> {
 
 	//@Query(value= "SELECT name,price FROM scrap_material  where id IN(select scrap_material_id from Cart  where customer_id = :id)", nativeQuery = true )
-	@Query("SELECT new com.app.springboot.scrapyard.entity.ScrapMaterial(sm.id,sm.name,sm.price) FROM ScrapMaterial sm WHERE sm.id IN(SELECT c.scrapMaterial.id FROM Cart c WHERE c.customer.id = :id)")
+	@Query("SELECT new com.app.springboot.scrapyard.entity.ScrapMaterial(sm.id,sm.name,sm.price) FROM ScrapMaterial sm WHERE sm.id IN(SELECT c.scrapMaterial.id FROM Cart c WHERE c.user.id = :id)")
 	public List<ScrapMaterial> getAllScrapMaterial(@Param("id") int id);
 	
 	@Modifying
@@ -25,6 +25,10 @@ public interface CartRepository extends JpaRepository<Cart,Integer> {
 	public int  deleteByScrapMaterialId(@Param("id") int id);
 	
 	@Modifying
-	@Query(value="insert into cart values(:id,:customer_id,:scrap_material_id)",nativeQuery = true )
-	public void saveToCart(@Param("id")int id,@Param("customer_id") int customer_id,@Param("scrap_material_id") int scrap_material_id );
+	@Query(value="insert into cart values(:id, :scrap_material_id, :user_id)",nativeQuery = true )
+	public void saveToCart(@Param("id")int id,@Param("scrap_material_id") int scrap_material_id,@Param("user_id") int user_id );
+	
+	@Modifying
+	@Query("DELETE FROM Cart c WHERE c.user.id = :id")
+	public int  deleteCartByUserId(@Param("id") int userId);
 }

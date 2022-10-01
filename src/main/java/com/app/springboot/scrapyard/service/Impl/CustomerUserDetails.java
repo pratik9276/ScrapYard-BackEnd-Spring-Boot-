@@ -1,4 +1,4 @@
-package com.app.springboot.scrapyard.service;
+package com.app.springboot.scrapyard.service.Impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,42 +11,42 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import com.app.springboot.scrapyard.entity.Customer;
+import com.app.springboot.scrapyard.entity.User;
 
 
 @Service
 public class CustomerUserDetails implements UserDetails{
 
 	@Autowired
-	private Customer customer;
+	private User user;
 	
 	
 	public long getId() {
-		return customer.getId();
+		return user.getId();
 	}
 
 	public String getFname() {
-		return customer.getFname();
+		return user.getFname();
 	}
 
 
 	public String getLname() {
-		return customer.getLname();
+		return user.getLname();
 	}
 
 
 	public String getEmail() {
-		return customer.getEmail();
+		return user.getEmail();
 	}
 
 	
 
-	public CustomerUserDetails(Customer customer) {
-		this.customer=customer;
+	public CustomerUserDetails(User user) {
+		this.user=user;
 	}
 
-	public  Customer getCustomer() {
-		return customer;
+	public  User getCustomer() {
+		return user;
 	}
 
 	@Override
@@ -58,13 +58,13 @@ public class CustomerUserDetails implements UserDetails{
 	@Override
 	public String getPassword() {
 		// TODO Auto-generated method stub
-		return customer.getPassword();
+		return user.getPassword();
 	}
 
 	@Override
 	public String getUsername() {
 		// TODO Auto-generated method stub
-		return customer.getEmail();
+		return user.getEmail();
 	}
 
 	@Override

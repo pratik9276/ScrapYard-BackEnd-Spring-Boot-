@@ -1,14 +1,12 @@
 package com.app.springboot.scrapyard.Repository;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.app.springboot.scrapyard.entity.User;
-
-
-
+import com.app.springboot.scrapyard.entity.Role;
 
 @Repository
-public interface CustomerRepository extends JpaRepository<User,Integer>{
+public interface RoleRepository extends JpaRepository<Role, Integer> {
 	
-	
+
 }

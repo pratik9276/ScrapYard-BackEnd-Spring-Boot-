@@ -10,27 +10,23 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.app.springboot.scrapyard.service.CustomUserDetailService;
-import com.app.springboot.scrapyard.service.CustomerUserDetails;
-
 import java.util.Enumeration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
+
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
 	@Autowired
-	//private UserDetailsService userDetailsService;
-    private CustomUserDetailService CustomUserDetailService;
+    private UserDetailsService userDetailsService;
 	
 	@Autowired
 	private JwtTokenHelper jwtTokenHelper;
@@ -43,12 +39,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
 		String requestToken = request.getHeader("Authorization");
 		Enumeration<String> headerNames = request.getHeaderNames();
-       /*
 		while(headerNames.hasMoreElements())
 		{
 			System.out.println(headerNames.nextElement());
 		}
-		*/
 		// Bearer 2352523sdgsg
 
 		System.out.println(requestToken);
@@ -81,7 +75,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
 		//	SecurityContextHolder.setContext(AnonymousAuthenticationFilter);
-			UserDetails userDetails = this.CustomUserDetailService.loadUserByUsername(username);
+			UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
 			if (this.jwtTokenHelper.validateToken(token, userDetails)) {
 				

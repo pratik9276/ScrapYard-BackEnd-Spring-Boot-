@@ -5,7 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -25,16 +27,18 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import com.app.springboot.scrapyard.security.CustomUserDetailService;
 import com.app.springboot.scrapyard.security.JwtAuthenticationEntryPoint;
 import com.app.springboot.scrapyard.security.JwtAuthenticationFilter;
-import com.app.springboot.scrapyard.service.CustomUserDetailService;
+
 
 @Configuration
 @EnableWebSecurity
+@EnableWebMvc
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
-	public static final String[] PUBLIC_URLS = {"/api/v1/auth/login", "/api/customers"};
+public static final String[] PUBLIC_URLS = {"/api/v1/auth/**"};
 	
 	@Autowired
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
@@ -44,27 +48,34 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
 	private CustomUserDetailService customUserDetailService;
-    
-    @Override
+   
+	
+	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		
-		http.csrf()
-        .disable()
-        .authorizeHttpRequests()
-        .antMatchers(PUBLIC_URLS)
-        .permitAll()
-        .anyRequest()
-        .authenticated()
-        .and()
-        .exceptionHandling().authenticationEntryPoint(this.jwtAuthenticationEntryPoint)
-        .and()
-        .sessionManagement()
-        .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		 http.addFilterBefore(this.jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-	      
+		http.
+		csrf()
+		.disable()
+		.authorizeHttpRequests()
+		.antMatchers("/api/v1/auth/**")
+		.permitAll()
+		.antMatchers(HttpMethod.GET)
+		.permitAll()
+		.anyRequest()
+		.authenticated()
+		.and().exceptionHandling()
+		.authenticationEntryPoint(this.jwtAuthenticationEntryPoint)
+		.and()
+		.sessionManagement()
+		.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        
+		http.addFilterBefore(this.jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+		
 	}
 
+	
     
+	
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(this.customUserDetailService).passwordEncoder(passwordEncoder());
@@ -72,7 +83,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
+    	return new BCryptPasswordEncoder();
+       // return NoOpPasswordEncoder.getInstance();
     }
     
     @Bean
@@ -80,6 +92,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return configuration.getAuthenticationManager();
     }
 
+    @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
+
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(this.customUserDetailService);
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
+
+    }
+    
     @Bean
     public FilterRegistrationBean coresFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

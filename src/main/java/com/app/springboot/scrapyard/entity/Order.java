@@ -1,7 +1,5 @@
 package com.app.springboot.scrapyard.entity;
 
-import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,40 +8,46 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
 import org.springframework.stereotype.Component;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
-@Component
+
 @Entity
-@Table(name="cart")
+@Table(name="customer_order")
 @NoArgsConstructor
 @Getter
 @Setter
-public class Cart {
+@ToString
+public class Order {
 
 	@Id 
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
+   
 	@Column(name="id")
 	private int id;
+     
+	@Column(name="name")
+	private String scrapMaterialName;
 	
-	@ManyToOne(targetEntity=User.class,cascade=CascadeType.ALL)
-	@JoinColumn(name = "user_id")
-	private int user;
+	@Column(name="price")
+	private int price;
+	
+	@Column(name="quantity",precision = 5, scale = 2,columnDefinition = "double default 0")
+	private double quantity;
 	
 	
-	@ManyToOne(targetEntity=ScrapMaterial.class,cascade=CascadeType.ALL)
-	@JoinColumn(name = "scrap_material_id")
-	private int scrapMaterial;
-
-    public Cart(Cart cart)
-    {
-    	this.id=cart.id;
-    	this.user=cart.user;
-    	this.scrapMaterial=cart.scrapMaterial;
-    }
+	@Column(name="totalPrice",precision = 5, scale = 2,columnDefinition = "double default 0")
+	private double totalPrice;
+	
+	@ManyToOne(targetEntity=User.class)
+	@JoinColumn(name ="user_id")
+	private User userId;
 	
 }

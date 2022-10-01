@@ -1,8 +1,8 @@
 package com.app.springboot.scrapyard.payloads;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Set;
 
-import com.app.springboot.scrapyard.entity.User;
+import com.app.springboot.scrapyard.entity.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -13,15 +13,15 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-public class UserDto {
-	
+public class UserDtoWithRoles {
+
 	private int id;
 	private String Fname;
 	private String Lname;
 	private String email;
 	private String password;
 	private String phoneNumber;
-	
+	private Role roles;
 	@JsonIgnore
 	public String getPassword() {
 		return password;
@@ -30,6 +30,4 @@ public class UserDto {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
-	
 }
